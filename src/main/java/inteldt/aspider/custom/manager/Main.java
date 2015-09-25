@@ -24,7 +24,7 @@ public class Main {
 		
 		// 从种子开始抓取 种子地址： http://www.zhihu.com/people/inteldt
 		CrawlerTask seedTask = new CrawlerTask();
-		seedTask.setUrl("http://www.zhihu.com/people/inteldt");
+		seedTask.setUrl("http://www.zhihu.com/people/wu-yu-msra");
 		seedTask.setSeed(true);
 		TaskManager.addTask(seedTask);
 		
@@ -36,7 +36,7 @@ public class Main {
 				processors.process(task); 
 			}
 		
-			try {Thread.sleep(1000);} catch (InterruptedException e) {e.printStackTrace();}
+			try {Thread.sleep(2000);} catch (InterruptedException e) {e.printStackTrace();} // 暂停2s
 		}
 
 	}

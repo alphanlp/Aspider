@@ -19,13 +19,17 @@ public class ProcessorChain extends Processor{
 	
 	static{
 		processrChain.add(new FetchHTTP());
+//		processrChain.add(new ExtractorURL());
 		processrChain.add(new Extractor());
 		processrChain.add(new DBWriter());
 	}
 
 	@Override
 	protected boolean accept(CrawlerTask task) {
-		return true;
+		if(task != null ){ // 任务不为空的时候，启用链处理
+			return true;
+		}
+		return false;
 	}
 
 	@Override

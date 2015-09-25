@@ -198,6 +198,7 @@ public class MyHttpClientPool {
 			}			
 		} catch (Exception e) {
 			log.severe(e.getMessage());
+			log.severe(getUrl + "抓取失败");
 			e.printStackTrace();
 		} finally{
 			httpget.abort();

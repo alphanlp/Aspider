@@ -7,6 +7,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -57,10 +60,7 @@ public class Login {
 //			System.out.println(_xsrf);
 			params.add(new BasicNameValuePair("_xsrf", _xsrf));// 第一步中获取的_xsrf参数
 		}
-		params.add(new BasicNameValuePair("email", user.getUsername()));// 用户名
 		params.add(new BasicNameValuePair("password", user.getPassword()));// 密码
-		params.add(new BasicNameValuePair("remember_me","true"));
-		
 		do{
 			try {
 				getIdentifyCode(httpclient);
@@ -73,10 +73,12 @@ public class Login {
 			System.out.println("请输入验证码：");
 			Scanner input=new Scanner(System.in);
 			String identityCode = input.nextLine();
-//			System.out.println(identityCode);
+			System.out.println(identityCode);
 
 			params.add(new BasicNameValuePair("captcha", identityCode));// 验证码
-			UrlEncodedFormEntity paramsEntity=new UrlEncodedFormEntity(params,Consts.UTF_8);
+			params.add(new BasicNameValuePair("remember_me","true"));
+			params.add(new BasicNameValuePair("email", user.getUsername()));// 用户名
+			UrlEncodedFormEntity paramsEntity=new UrlEncodedFormEntity(params, Consts.UTF_8);
 			
 			html = pool.fetchByPostMethod("http://www.zhihu.com/login/email", paramsEntity);
 		}while(html.contains("errcode"));
@@ -113,5 +115,10 @@ public class Login {
 	public static void main(String[] args) {
 		Login login = new Login("464531351@qq.com","shisi121");
 		login.login();
+		
+		String url = "http://www.zhihu.com/people/xjiangxjxjxjx/logs";
+		MyHttpClientPool connPool = MyHttpClientPool.getClientConnectionPool();
+		String html = connPool.fetchByGetMethod(url);
+		System.out.println(html);
 	}
 }

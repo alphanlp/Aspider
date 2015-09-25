@@ -1,7 +1,7 @@
 package inteldt.aspider.custom.framework;
 
 /**
- * 处理器 “接口”
+ * 处理器 “接口”。这里使用了一个算法模板的设计模式
  * @author pei
  *
  */

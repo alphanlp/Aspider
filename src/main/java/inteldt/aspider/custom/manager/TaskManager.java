@@ -32,6 +32,15 @@ public class TaskManager {
 	}
 	
 	/**
+	 * 添加任务
+	 * @param taskUrl
+	 */
+	public static void addTask(String taskUrl){
+		CrawlerTask task = new CrawlerTask();
+		task.setUrl(taskUrl);
+		addTask(task);
+	}
+	/**
 	 * 从准备队列中取出一个任务，并放置到活动队列中
 	 * @return
 	 */
@@ -42,13 +51,17 @@ public class TaskManager {
 	}
 	
 	/**
-	 * 删除任务
+	 * 删除活动队列中的任务
 	 * @param task
 	 */
-	public static void deleteTask(CrawlerTask task){
-		readyQueue.remove(task);
+	public static void deleteActiveTask(CrawlerTask task){
+		activeQueue.remove(task);
 	}
 	
+	/**
+	 * 任务全部完成，程序停止
+	 * @return
+	 */
 	public static boolean isTaskEmpty(){
 		return readyQueue.isEmpty() && activeQueue.isEmpty();
 	}
