@@ -2,7 +2,7 @@ package inteldt.aspider.custom.framework;
 
 import inteldt.aspider.custom.extractor.Extractor;
 import inteldt.aspider.custom.fetcher.FetchHTTP;
-import inteldt.aspider.custom.writer.DBWriter;
+import inteldt.aspider.custom.writer.FileWriter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,8 @@ public class ProcessorChain extends Processor{
 		processrChain.add(new FetchHTTP());
 //		processrChain.add(new ExtractorURL());
 		processrChain.add(new Extractor());
-		processrChain.add(new DBWriter());
+//		processrChain.add(new DBWriter());
+		processrChain.add(new FileWriter());
 	}
 
 	@Override

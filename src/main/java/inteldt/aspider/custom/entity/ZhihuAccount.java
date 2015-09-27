@@ -173,5 +173,24 @@ public class ZhihuAccount {
 	public void setGoodTopic(List<String> goodTopic) {
 		this.goodTopic = goodTopic;
 	}
-
+	
+	@Override
+	public String toString(){
+		return 	"<REC>"+ "\n" +
+				"[account]:" + account + "\n" +
+				"[name]:" + name + "\n"+
+				"[byname]:" + byname + "\n" +
+				"[avatar]:" + avatar + "\n" + 
+				"[gender]:" + gender + "\n" +
+				"[location]:" + location + "\n" +
+				"[business]:" + business + "\n" +
+				"[company]:" + company + "\n" +
+				"[position]:" + position + "\n" +
+				"[education]:" + education + "\n" +
+				"[master]:" + master + "\n" +
+				"[desciption]:" + desciption + "\n" +
+				"[okayNum]:" + okayNum + "\n" +
+				"[thksNum]:" + thksNum + "\n" +
+				"[goodTopic]:" + goodTopic + "\n";
+	}
 }

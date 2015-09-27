@@ -99,7 +99,7 @@ public class Login {
        
         byte[] bs = new byte[1024];  
         int len = -1;  
-        OutputStream os = new FileOutputStream(new File("C:\\Users\\lenovo\\Desktop\\captcha.gif"));
+        OutputStream os = new FileOutputStream(new File("C:\\Users\\User\\Desktop\\captcha.gif"));
         while ((len = is.read(bs)) != -1) {  
           os.write(bs, 0, len);  
         }  

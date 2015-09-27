@@ -39,7 +39,8 @@ public class Extractor extends Processor{
 	@Override
 	protected void acceptProcess(CrawlerTask task) {
 		// 抽取用户信息
-		if(RegexUtil.isMatched(task.getUrl(), "http://www.zhihu.com/people/\\w+")){
+		if(RegexUtil.isMatched(task.getUrl(), "http://www.zhihu.com/people/\\S+")
+				&& !RegexUtil.isMatched(task.getUrl(), "http://www.zhihu.com/people/\\S+/followees")){
 			/* 第一部分，将用户信息抽取 */
 			ZhihuAccount account = new ZhihuAccount();
 			Document doc = Jsoup.parse(task.getHtml());			
@@ -47,63 +48,89 @@ public class Extractor extends Processor{
 			account.setAccount(task.getUrl().substring(task.getUrl().lastIndexOf("/") + 1)); 
 			// name
 			Element elem = doc.select("span.name").last();
-			String name = elem.text();
-			account.setName(name);
+			if(elem != null) {
+				String name = elem.text();
+				account.setName(name);
+			}
+
 			// byname
 			elem = doc.select("span.bio").first();
-			String byname = elem.text();
-			account.setByname(byname);
+			if(elem != null){
+				String byname = elem.text();
+				account.setByname(byname);
+			}
 			// avatar 
-			elem = doc.select(".avatar avatar-l").first();
-			String imgurl = elem.attr("src");
-			downloadImage(imgurl,"tofilepath");// TODO
-			account.setAvatar("tofilepath");// TODO
+//			elem = doc.select(".avatar").select(".avatar-l").first();
+//			String imgurl = elem.attr("src").substring(8).replaceAll(".","/");
+//			downloadImage(imgurl,"C:/Users/User/Desktop/zhihu/" + imgurl);// TODO
+//			account.setAvatar("C:/Users/User/Desktop/zhihu/" + imgurl);// TODO
 			// gender
-			if(doc.select(".icon icon-profile-male").isEmpty()){account.setGender("女");}else{account.setGender("男");}
+			if(doc.select(".icon").select(".icon-profile-male").isEmpty()){account.setGender("女");}else{account.setGender("男");}
 			// location
-			elem = doc.select("span.location item").first();
-			String location = elem.text();
-			account.setLocation(location);
+			elem = doc.select("span.location").select(".item").first();
+			if(elem != null){
+				String location = elem.text();
+				account.setLocation(location);
+			}
 			// business
-			elem = doc.select("span.business item").first();
-			String business = elem.text();
-			account.setBusiness(business);
+			elem = doc.select("span.business").select(".item").first();
+			if(elem != null){
+				String business = elem.text();
+				account.setBusiness(business);
+			}
 			// company
-			elem = doc.select("span.employment item").first();
-			String company = elem.text();
-			account.setCompany(company);
+			elem = doc.select("span.employment").select(".item").first();
+			if(elem != null){
+				String company = elem.text();
+				account.setCompany(company);
+			}
 			// position
-			elem = doc.select("span.position item").first();
-			String position = elem.text();
-			account.setPosition(position);
+			elem = doc.select("span.position").select(".item").first();
+			if(elem != null){
+				String position = elem.text();
+				account.setPosition(position);
+			}
 			// education
-			elem = doc.select("span.education item").first();
-			String education = elem.text();
-			account.setEducation(education);
+			elem = doc.select("span.education").select(".item").first();
+			if(elem != null){
+				String education = elem.text();
+				account.setEducation(education);
+			}
 			// master
-			elem = doc.select("span.education-extra item").first();
-			String master = elem.text();
-			account.setMaster(master);
+			elem = doc.select("span.education-extra").select(".item").first();
+			if(elem != null){
+				String master = elem.text();
+				account.setMaster(master);
+			}
 			// desciption
-			elem = doc.select("span.description unfold-item").first();
-			String desciption = elem.text();
-			account.setDesciption(desciption);
+			elem = doc.select("span.description").select(".unfold-item").first();
+			if(elem != null){
+				String desciption = elem.text();
+				account.setDesciption(desciption);
+			}
 			// okayNum
 			elem = doc.select("span.zm-profile-header-user-agree > strong").first();
-			int okayNum = Integer.parseInt(elem.text());
-			account.setOkayNum(okayNum);
+			if(elem != null){
+				int okayNum = Integer.parseInt(elem.text());
+				account.setOkayNum(okayNum);
+			}
 			// thksNum
 			elem = doc.select("span.zm-profile-header-user-thanks > strong").first();
-			int thksNum = Integer.parseInt(elem.text());
-			account.setThksNum(thksNum);
+			if(elem != null){
+				int thksNum = Integer.parseInt(elem.text());
+				account.setThksNum(thksNum);
+			}
 			// goodTopic
 			Elements elems = doc.select("a.zg-gray-darker");
 			List<String> goodTopic = new ArrayList<String>();
-			for(Element topic : elems){
-				goodTopic.add(topic.text());
+			if(elem != null){
+				for(Element topic : elems){
+					goodTopic.add(topic.text());
+				}
+				account.setGoodTopic(goodTopic);
+				task.setAccount(account);
 			}
-			account.setGoodTopic(goodTopic);
-			task.setAccount(account);
+			System.out.println(account);
 			
 			/* 第二部分，将关注者页面的链接抽取 */
 			List<String> links = new ArrayList<String>();
@@ -115,13 +142,13 @@ public class Extractor extends Processor{
 		}
 		
 		// 抽取关注者
-		if(RegexUtil.isMatched(task.getUrl(), "http://www.zhihu.com/people/\\w+/followees")){
+		if(RegexUtil.isMatched(task.getUrl(), "http://www.zhihu.com/people/\\S+/followees")){
 			Document doc = Jsoup.parse(task.getHtml());	
 			Elements elems = doc.select("a[href^=http://www.zhihu.com/people/]");
 			List<String> links = new ArrayList<String>();
 			for(Element elem : elems){
 				String url = elem.absUrl("href");
-				if(RegexUtil.isMatched(url, "http://www.zhihu.com/people/\\w+", true)){
+				if(RegexUtil.isMatched(url, "http://www.zhihu.com/people/\\S+")){
 					links.add(url);
 					TaskManager.addTask(url);// 添加任务
 				}

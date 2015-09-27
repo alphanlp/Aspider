@@ -24,13 +24,15 @@ public class FetchHTTP extends Processor{
 		String html = connPool.fetchByGetMethod(task.getUrl());
 		if(html != null){
 			task.setFetchStatus(1);// 抓取成功
-			
+			System.out.println("抓取成功：" + task.getUrl());
 			// 导出html，调试解析器
 //			try {
-//				FileUtils.writeStringToFile(new File("C:/Users/lenovo/Desktop/zhihu.txt"), html);
+//				FileUtils.writeStringToFile(new File("C:/Users/User/Desktop/zhihu.txt"), html);
 //			} catch (IOException e) {
 //				e.printStackTrace();
 //			}
+		}else{
+			System.out.println("抓取失败：" + task.getUrl());
 		}
 		
 		task.setHtml(html); // 抓取失败
