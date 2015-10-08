@@ -26,14 +26,12 @@ public class DBWriter extends Processor{
 		Dao dao = new DaoImpl();
 		dao.insertTask(task);
 		
-		TaskManager.deleteActiveTask(task);// 任务完成，从活动队列中删除
+		TaskManager.deleteActiveUrl(task.getUrl());// 任务完成，从活动队列中删除
 	}
 
 	@Override
 	protected void rejectProcess(CrawlerTask task) {
-		task.setFinished(true);
-		
-		TaskManager.deleteActiveTask(task);
+		TaskManager.deleteActiveUrl(task.getUrl());
 	}
 
 }

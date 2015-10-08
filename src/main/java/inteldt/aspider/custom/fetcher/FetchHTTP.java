@@ -20,11 +20,13 @@ public class FetchHTTP extends Processor{
 	private static Logger logger = Logger.getLogger(FetchHTTP.class.getName());
 	
 	protected void acceptProcess(CrawlerTask task) {
+		logger.info("正在下载：" + task.getUrl());
+		
 		MyHttpClientPool connPool = MyHttpClientPool.getClientConnectionPool();
 		String html = connPool.fetchByGetMethod(task.getUrl());
 		if(html != null){
 			task.setFetchStatus(1);// 抓取成功
-			System.out.println("抓取成功：" + task.getUrl());
+			System.out.println("下载成功：" + task.getUrl());
 			// 导出html，调试解析器
 //			try {
 //				FileUtils.writeStringToFile(new File("C:/Users/User/Desktop/zhihu.txt"), html);
@@ -32,7 +34,7 @@ public class FetchHTTP extends Processor{
 //				e.printStackTrace();
 //			}
 		}else{
-			System.out.println("抓取失败：" + task.getUrl());
+			System.out.println("下载失败：" + task.getUrl());
 		}
 		
 		task.setHtml(html); // 抓取失败

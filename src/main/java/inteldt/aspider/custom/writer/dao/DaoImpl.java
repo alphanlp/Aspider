@@ -18,11 +18,12 @@ public class DaoImpl implements Dao {
 	@Override
 	public void insertTask(CrawlerTask task) {
 		// 用户信息
-		if(RegexUtil.isMatched(task.getUrl(), "http://www.zhihu.com/people/\\w+")){
+		if(RegexUtil.isMatched(task.getUrl(), "http://www.zhihu.com/people/\\S+")
+				&& !RegexUtil.isMatched(task.getUrl(), "http://www.zhihu.com/people/\\S+/followees")){
 			insertAccount(task);
 		}
 		
-		if(RegexUtil.isMatched(task.getUrl(), "http://www.zhihu.com/people/\\w+/followees")){
+		if(RegexUtil.isMatched(task.getUrl(), "http://www.zhihu.com/people/\\S+/followees")){
 			insertFolloweesLinks(task);
 		}
 		
@@ -52,20 +53,21 @@ public class DaoImpl implements Dao {
 			ps.setString(13, task.getAccount().getDesciption());
 			ps.setInt(14, task.getAccount().getOkayNum());
 			ps.setInt(15, task.getAccount().getThksNum());
-			StringBuffer sb = new StringBuffer();
-			for(String topic : task.getAccount().getGoodTopic()){
-				sb.append(topic + ";");
-			}
-			ps.setString(16,sb.substring(0, sb.length() - 1));
+			String topics = task.getAccount().getGoodTopic().toString();
+			ps.setString(16,topics.substring(1,topics.length()-1));
+			
+			
 			ps.execute();
 			ps.close();
 			
-			sql = "INSERT INTO zhihu_url_relation(URL,FollowURL) VALUES(?,?)";
-			ps = conn.prepareStatement(sql);
-			ps.setString(1, task.getUrl());
-			ps.setString(2, task.getLinks().get(0));
-			ps.execute();
-			ps.close();
+			if(task.getLinks() != null){
+				sql = "INSERT INTO zhihu_url_relation(URL,FollowURL) VALUES(?,?)";
+				ps = conn.prepareStatement(sql);
+				ps.setString(1, task.getUrl());
+				ps.setString(2, task.getLinks().get(0));
+				ps.execute();
+				ps.close();
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally{
@@ -80,6 +82,7 @@ public class DaoImpl implements Dao {
 		conn = DBManager.getMySQLConn("192.168.0.191", 3306, "hap", "root", "root");
 		String sql = "INSERT INTO zhihu_url_relation(URL,FollowURL) VALUES(?,?)";
 		try {
+			conn.setAutoCommit(false);
 			ps = conn.prepareStatement(sql);
 			for(String link : task.getLinks()){
 				ps.setString(1, task.getUrl());

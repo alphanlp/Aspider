@@ -10,40 +10,40 @@ import java.util.List;
  */
 public class ZhihuAccount {
 	/** ID，相当于User ID*/
-	private String account;
+	private String account = "";
 	
 	/** 名称*/
-	private String name;
+	private String name = "";
 	
 	/** 昵称*/
-	private String byname;
+	private String byname = "";
 	
 	/** 头像，存储图片本地地址*/
-	private String avatar;
+	private String avatar = "";
 	
 	/** 性别，男/女*/
-	private String gender;
+	private String gender = "";
 	
 	/** 地址*/
-	private String location;
+	private String location = "";
 	
 	/** 行业*/
-	private String business;
+	private String business = "";
 	
 	/** 公司*/
-	private String company;
+	private String company = "";
 	
 	/** 职位*/
-	private String position;
+	private String position = "";
 	
 	/** 学校*/
-	private String education;
+	private String education = "";
 	
 	/** 专业*/
-	private String master;
+	private String master = "";
 	
 	/** 自我描述*/
-	private String desciption;
+	private String desciption = "";
 
 	/** 获得赞同数量*/
 	private int okayNum;

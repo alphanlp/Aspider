@@ -1,6 +1,7 @@
 package inteldt.aspider.custom.extractor;
 
 import inteldt.aspider.custom.entity.ZhihuAccount;
+import inteldt.aspider.custom.filter.RedisFilter;
 import inteldt.aspider.custom.framework.CrawlerTask;
 import inteldt.aspider.custom.framework.Processor;
 import inteldt.aspider.custom.manager.TaskManager;
@@ -12,10 +13,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -52,7 +54,6 @@ public class Extractor extends Processor{
 				String name = elem.text();
 				account.setName(name);
 			}
-
 			// byname
 			elem = doc.select("span.bio").first();
 			if(elem != null){
@@ -60,10 +61,14 @@ public class Extractor extends Processor{
 				account.setByname(byname);
 			}
 			// avatar 
-//			elem = doc.select(".avatar").select(".avatar-l").first();
-//			String imgurl = elem.attr("src").substring(8).replaceAll(".","/");
-//			downloadImage(imgurl,"C:/Users/User/Desktop/zhihu/" + imgurl);// TODO
-//			account.setAvatar("C:/Users/User/Desktop/zhihu/" + imgurl);// TODO
+			elem = doc.select(".avatar").select(".avatar-l").first();
+			if(elem != null){
+				String imgurl = elem.attr("src");
+//				String filepath = imgurl.substring(8).replaceAll("\\.","/");
+//				downloadImage(imgurl,"./headImg/" + filepath);
+//				account.setAvatar(System.getProperty("user.dir") + "/headImg/" + filepath);
+				account.setAvatar(imgurl);
+			}
 			// gender
 			if(doc.select(".icon").select(".icon-profile-male").isEmpty()){account.setGender("女");}else{account.setGender("男");}
 			// location
@@ -122,8 +127,8 @@ public class Extractor extends Processor{
 			}
 			// goodTopic
 			Elements elems = doc.select("a.zg-gray-darker");
-			List<String> goodTopic = new ArrayList<String>();
 			if(elem != null){
+				List<String> goodTopic = new ArrayList<String>();
 				for(Element topic : elems){
 					goodTopic.add(topic.text());
 				}
@@ -133,12 +138,16 @@ public class Extractor extends Processor{
 			System.out.println(account);
 			
 			/* 第二部分，将关注者页面的链接抽取 */
-			List<String> links = new ArrayList<String>();
-			links.add(task.getUrl() + "/followees");
+			List<String> links = null;
+			if(!RedisFilter.put(task.getUrl(),task.getUrl() + "/followees")){
+				links = new ArrayList<String>();
+				links.add(task.getUrl() + "/followees");
+				TaskManager.addSecondaryUrl(task.getUrl() + "/followees");// 添加任务
+			}
 			task.setLinks(links);
 			task.setLinkExtractorFinished(true);
 			
-			TaskManager.addTask(task.getUrl() + "/followees");// 添加任务
+			
 		}
 		
 		// 抽取关注者
@@ -149,11 +158,13 @@ public class Extractor extends Processor{
 			for(Element elem : elems){
 				String url = elem.absUrl("href");
 				if(RegexUtil.isMatched(url, "http://www.zhihu.com/people/\\S+")){
-					links.add(url);
-					TaskManager.addTask(url);// 添加任务
+					if(!RedisFilter.put(task.getUrl(),url)){
+						links.add(url);
+						TaskManager.addMainUrl(url);// 添加任务
+					}	
 				}
 			}
-			
+			task.setLinks(links);
 			task.setLinkExtractorFinished(true);
 		}
 	}
@@ -164,10 +175,10 @@ public class Extractor extends Processor{
 		task.setFinished(true);
 	}
 	
-	private void downloadImage(String imgUrl, String toFilePath) {		
+	private static void downloadImage(String imgUrl, String toFilePath) {		
 		try {
 			URL url = new URL(imgUrl); 
-			URLConnection httpconn = url.openConnection();
+			HttpsURLConnection httpconn = (HttpsURLConnection)url.openConnection();
 			
 			InputStream is = httpconn.getInputStream();
 	       
@@ -187,5 +198,10 @@ public class Extractor extends Processor{
 		}
 		
 	}
+	
+//	public static void main(String[] args) {
+//		String url = "https://pic3.zhimg.com/bad828222_l.jpg";
+//		downloadImage(url, "C:/Users/lenovo/Desktop/头像.jpg");
+//	}
 
 }
