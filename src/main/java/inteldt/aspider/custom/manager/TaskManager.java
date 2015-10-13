@@ -27,6 +27,10 @@ public class TaskManager {
 		
 	}
 	
+	public static void addSeedUrl(String url){
+		addMainUrl(url);
+	}
+	
 	/**
 	 * 添加主要任务（优先级分为2个，这是优先级高的任务），并负责去重。
 	 */

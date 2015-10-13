@@ -3,7 +3,7 @@
  */
 package inteldt.aspider.custom.framework;
 
-import inteldt.aspider.custom.entity.ZhihuAccount;
+import inteldt.aspider.custom.entity.Entity;
 
 import java.io.Serializable;
 import java.util.List;
@@ -17,6 +17,9 @@ import java.util.List;
 public class CrawlerTask implements Serializable {
 	private static final long serialVersionUID = 7874096757350100472L;
 
+//	/**所属域名*/
+//	private String domain = null;
+	
 	/**抓取任务链接地址*/
     private String url = null;
     
@@ -35,9 +38,10 @@ public class CrawlerTask implements Serializable {
     /** 网页html*/
     private String html = null;
     
-    /** 用户信息实体类，封装所有用户相关信息*/
-    private ZhihuAccount account = null;
+    /** 解析字段封装*/
+    private Entity entity = null;
     
+    /** 抽取的链接*/
     private List<String> links = null;
    
     
@@ -97,12 +101,20 @@ public class CrawlerTask implements Serializable {
 		this.html = html;
 	}
 
-	public ZhihuAccount getAccount() {
-		return account;
+	public Entity getEntity() {
+		return entity;
 	}
 
-	public void setAccount(ZhihuAccount account) {
-		this.account = account;
+	public void setEntity(Entity entity) {
+		this.entity = entity;
 	}
+
+//	public String getDomain() {
+//		return domain;
+//	}
+//
+//	public void setDomain(String domain) {
+//		this.domain = domain;
+//	}
 
 }

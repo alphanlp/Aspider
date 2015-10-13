@@ -1,8 +1,11 @@
 package inteldt.aspider.custom.manager;
 
+import inteldt.aspider.custom.extractor.ZhihuExtractor;
+import inteldt.aspider.custom.fetcher.FetchHTTP;
 import inteldt.aspider.custom.framework.CrawlerTask;
 import inteldt.aspider.custom.framework.ProcessorChain;
-import inteldt.aspider.custom.pre.Login;
+import inteldt.aspider.custom.pre.ZhihuLogin;
+import inteldt.aspider.custom.writer.DBWriter;
 
 /**
  * 启动程序
@@ -16,18 +19,19 @@ public class Main {
 		start();
 	}
 	
-	public static void start(){
-		// 登录知乎
-		Login login = new Login("464531351@qq.com","shisi121");
-		login.login();
+	public static void start(){		
+		// 加载种子
+		TaskManager.addSeedUrl("http://www.zhihu.com/people/wu-yu-msra");
 		
-		// 从种子开始抓取。设置种子地址： http://www.zhihu.com/people/wu-yu-msra
-		if(TaskManager.isReadyQueueEmpty()){// 准备队列为空时才添加种子地址
-			TaskManager.addMainUrl("http://www.zhihu.com/people/wu-yu-msra");
-		}
 		
-		// 任务链，从种子开始，抓取数据
+		// 配置任务链
 		ProcessorChain processors = new ProcessorChain();
+		processors.addPreProcessr(new ZhihuLogin());// 预处理，登录
+		processors.addFetcher(new FetchHTTP());// 网页下载器
+		processors.addExtractor(new ZhihuExtractor());// 解析抽取器
+		processors.addWriter(new DBWriter());// 存储器
+		
+		// 抓取数据
 		while(true){
 			String url = TaskManager.nextUrl(); // 取一个任务
 			if(url == null){

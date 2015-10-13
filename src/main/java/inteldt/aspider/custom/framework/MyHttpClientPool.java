@@ -148,7 +148,7 @@ public class MyHttpClientPool {
 	}
 	
 	/**
-	 * Get方法发送请求，获取响应内容
+	 * Get方法封装，发get送请求，获取响应内容
 	 */
 	public String fetchByGetMethod(String getUrl){
 		String charset = null;
@@ -207,7 +207,12 @@ public class MyHttpClientPool {
 		return html;
 	}
 	
-	
+	/**
+	 * Post方法封装，发送post请求，获取响应内容
+	 * @param postUrl
+	 * @param paramsEntity
+	 * @return
+	 */
 	public String fetchByPostMethod(String postUrl, UrlEncodedFormEntity paramsEntity){
 		String html = null;
 		HttpPost httpPost = new HttpPost(postUrl);

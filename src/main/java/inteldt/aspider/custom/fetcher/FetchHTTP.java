@@ -4,11 +4,7 @@ import inteldt.aspider.custom.framework.CrawlerTask;
 import inteldt.aspider.custom.framework.MyHttpClientPool;
 import inteldt.aspider.custom.framework.Processor;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.logging.Logger;
-
-import org.apache.commons.io.FileUtils;
 
 /**
  * 抓取http/https协议的web内容
@@ -27,12 +23,6 @@ public class FetchHTTP extends Processor{
 		if(html != null){
 			task.setFetchStatus(1);// 抓取成功
 			System.out.println("下载成功：" + task.getUrl());
-			// 导出html，调试解析器
-//			try {
-//				FileUtils.writeStringToFile(new File("C:/Users/User/Desktop/zhihu.txt"), html);
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
 		}else{
 			System.out.println("下载失败：" + task.getUrl());
 		}

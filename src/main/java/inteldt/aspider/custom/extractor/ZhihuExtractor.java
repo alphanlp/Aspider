@@ -25,8 +25,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 
-public class Extractor extends Processor{
-	private static Logger logger = Logger.getLogger(Extractor.class.getName());
+public class ZhihuExtractor extends Processor {
+	private static Logger logger = Logger.getLogger(ZhihuExtractor.class.getName());
 
 	@Override
 	protected boolean accept(CrawlerTask task) {
@@ -49,7 +49,7 @@ public class Extractor extends Processor{
 			// account ID
 			account.setAccount(task.getUrl().substring(task.getUrl().lastIndexOf("/") + 1)); 
 			// name
-			Element elem = doc.select("span.name").last();
+			Element elem = doc.select("span.name").get(1);
 			if(elem != null) {
 				String name = elem.text();
 				account.setName(name);
@@ -111,7 +111,7 @@ public class Extractor extends Processor{
 			elem = doc.select("span.description").select(".unfold-item").first();
 			if(elem != null){
 				String desciption = elem.text();
-				account.setDesciption(desciption);
+				account.setDescription(desciption);
 			}
 			// okayNum
 			elem = doc.select("span.zm-profile-header-user-agree > strong").first();
@@ -133,8 +133,8 @@ public class Extractor extends Processor{
 					goodTopic.add(topic.text());
 				}
 				account.setGoodTopic(goodTopic);
-				task.setAccount(account);
 			}
+			task.setEntity(account.generateEntity());
 			System.out.println(account);
 			
 			/* 第二部分，将关注者页面的链接抽取 */
@@ -146,8 +146,6 @@ public class Extractor extends Processor{
 			}
 			task.setLinks(links);
 			task.setLinkExtractorFinished(true);
-			
-			
 		}
 		
 		// 抽取关注者

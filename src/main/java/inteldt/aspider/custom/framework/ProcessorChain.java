@@ -1,9 +1,5 @@
 package inteldt.aspider.custom.framework;
 
-import inteldt.aspider.custom.extractor.Extractor;
-import inteldt.aspider.custom.fetcher.FetchHTTP;
-import inteldt.aspider.custom.writer.DBWriter;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,15 +10,25 @@ import java.util.List;
  *
  */
 public class ProcessorChain extends Processor{
+	private static List<Processor> preProcessrChain = new ArrayList<Processor>();
+	private static List<Processor> fetcherChain = new ArrayList<Processor>();
+	private static List<Processor> extractorChain = new ArrayList<Processor>();
+	private static List<Processor> writerChain = new ArrayList<Processor>();
 	
-	private static List<Processor> processrChain = new ArrayList<Processor>();
+	public void addPreProcessr(Processor processor){
+		preProcessrChain.add(processor);
+	}
 	
-	static{
-		processrChain.add(new FetchHTTP());
-//		processrChain.add(new ExtractorURL());
-		processrChain.add(new Extractor());
-		processrChain.add(new DBWriter());
-//		processrChain.add(new FileWriter());
+	public void addFetcher(Processor processor){
+		fetcherChain.add(processor);
+	}
+	
+	public void addExtractor(Processor processor){
+		extractorChain.add(processor);
+	}
+	
+	public void addWriter(Processor processor){
+		writerChain.add(processor);
 	}
 
 	@Override
@@ -35,7 +41,19 @@ public class ProcessorChain extends Processor{
 
 	@Override
 	protected void acceptProcess(CrawlerTask task) {
-		for(Processor processor : processrChain){
+		for(Processor processor : preProcessrChain){
+			processor.process(task);
+		}
+		
+		for(Processor processor : fetcherChain){
+			processor.process(task);
+		}
+		
+		for(Processor processor : extractorChain){
+			processor.process(task);
+		}
+		
+		for(Processor processor : writerChain){
 			processor.process(task);
 		}
 	}

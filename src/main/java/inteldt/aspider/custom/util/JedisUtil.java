@@ -24,10 +24,10 @@ public final class JedisUtil {
         	Properties pro = PropertiesUtil.getProperties("conf/redis.properties");
 
         	//获取配置文件中的key值
-    	    int maxIdle = Integer.parseInt((String)pro.get("redis.pool.maxIdle"));
+    	    int maxIdle = Integer.parseInt(pro.getProperty("redis.pool.maxIdle"));
     	   
-    	    boolean testOnBorrow = Boolean.parseBoolean((String)pro.get("redis.pool.testOnBorrow"));
-    	    boolean onreturn = Boolean.parseBoolean((String)pro.get("redis.pool.testOnReturn"));
+    	    boolean testOnBorrow = Boolean.parseBoolean(pro.getProperty("redis.pool.testOnBorrow"));
+    	    boolean onreturn = Boolean.parseBoolean(pro.getProperty("redis.pool.testOnReturn"));
     	   
     		//创建jedis池配置实例
             JedisPoolConfig config = new JedisPoolConfig();

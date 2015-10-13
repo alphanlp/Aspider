@@ -1,5 +1,9 @@
 package inteldt.aspider.custom.entity;
 
+import inteldt.aspider.custom.manager.Config;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,7 +12,7 @@ import java.util.List;
  * @author pei
  *
  */
-public class ZhihuAccount {
+public class ZhihuAccount implements GenerateEntity {
 	/** ID，相当于User ID*/
 	private String account = "";
 	
@@ -43,7 +47,7 @@ public class ZhihuAccount {
 	private String master = "";
 	
 	/** 自我描述*/
-	private String desciption = "";
+	private String description = "";
 
 	/** 获得赞同数量*/
 	private int okayNum;
@@ -142,12 +146,12 @@ public class ZhihuAccount {
 		this.master = master;
 	}
 
-	public String getDesciption() {
-		return desciption;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDesciption(String desciption) {
-		this.desciption = desciption;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public int getOkayNum() {
@@ -188,9 +192,58 @@ public class ZhihuAccount {
 				"[position]:" + position + "\n" +
 				"[education]:" + education + "\n" +
 				"[master]:" + master + "\n" +
-				"[desciption]:" + desciption + "\n" +
+				"[description]:" + description + "\n" +
 				"[okayNum]:" + okayNum + "\n" +
 				"[thksNum]:" + thksNum + "\n" +
 				"[goodTopic]:" + goodTopic + "\n";
 	}
+	
+	/**
+	 * 利用反射，将该对象的属性和属性值封装起来
+	 */
+	public Entity generateEntity() {
+		Field[] fields = this.getClass().getDeclaredFields();
+		int size = 0;
+		List<String> fieldnames = new ArrayList<String>();
+		List<String> fieldvalues = new ArrayList<String>();
+		List<Class<?>> fieldTypes = new ArrayList<Class<?>>();
+		try {
+			for(int i = 0; i < fields.length; i++){
+				fields[i].setAccessible(true);
+				// 属性
+				fieldnames.add(fields[i].getName());
+				// 属性值
+				fieldvalues.add(fields[i].get(this).toString());
+				// 属性类型
+				fieldTypes.add(fields[i].getType());
+				// 属性数量
+				size = i + 1;
+			}
+			
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		
+		Entity entity = new Entity();
+		entity.setFieldNames(fieldnames);
+		entity.setFieldValues(fieldvalues);
+		entity.setFieldTypes(fieldTypes);
+		entity.setFieldsize(size);
+	
+		entity.setTablename(Config.ZHIHU_SAVETABLE);
+		return entity;
+	}
+
+	
+//	public static void main(String[] args) {
+//		ZhihuAccount account = new ZhihuAccount();
+//		account.setAccount("hello");
+//		account.setOkayNum(10);
+//		List<String> goodTopic = new ArrayList<String>();
+//		goodTopic.add("你好，我好，大家好");
+//		account.setGoodTopic(goodTopic);
+//		account.generateEntity();
+//	}
 }
